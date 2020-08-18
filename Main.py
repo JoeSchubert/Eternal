@@ -162,7 +162,8 @@ async def get_profile_image(ctx, *, msg):
         if not ctx.message.mentions:
             await ctx.message.channel.send("Sorry, nothing found associated with: " + user_toon)
         else:
-            await ctx.message.channel.send("No profile images found associated with: <@!" + str(ctx.message.mentions[0].id) + ">")
+            await ctx.message.channel.send("No profile images found associated with: <@!" +
+                                           str(ctx.message.mentions[0].id) + ">")
 
 
 @bot.event
