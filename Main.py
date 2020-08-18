@@ -130,10 +130,6 @@ async def toons_for_user(ctx):
             for x in results:
                 await ctx.message.channel.send(
                      "Character: " + x[2] + " was added to: <@!" + x[1] + "> on: " + x[3])
-                #
-                # Save this as an alternative to posting it in the channel.
-                # Drawback is that it will only mention as the username, not a server nickname
-                # await ctx.author.send("Character: " + x[2] + " was added to: <@!" + x[1] + "> on: " + x[3])
         else:
             await ctx.message.channel.send("Could not find any characters for: <@!" + str(ctx.message.mentions[0].id) +
                                            ">")
@@ -144,7 +140,6 @@ async def get_profile_image(ctx, msg):
     user = ""
     user_toon = msg.strip()
     if not ctx.message.mentions:
-        # await ctx.message.channel.send("You need to mention a user to use this command.")
         results = DB.search_user_character(conn, user_toon)
         if results:
             user = [i[1] for i in results]
