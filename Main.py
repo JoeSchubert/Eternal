@@ -156,7 +156,7 @@ async def get_profile_image(ctx, msg):
                 await ctx.send(file=file, content="Uploaded: " + x[:-4])
                 limiter += 1
             else:
-                ctx.message.channel.send("More than 3 images were found, limited to the first 3.")
+                await ctx.message.channel.send("More than 3 images were found, limited to the first 3.")
                 break
     else:
         if not ctx.message.mentions:
