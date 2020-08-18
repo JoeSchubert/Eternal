@@ -147,9 +147,7 @@ async def get_profile_image(ctx, msg):
         # await ctx.message.channel.send("You need to mention a user to use this command.")
         results = DB.search_user_character(conn, user_toon)
         if results:
-            for x in results:
-                user = x[1]
-                break
+            user = [i[1] for i in results]
     else:
         user = str(ctx.message.mentions[0].id)
 
