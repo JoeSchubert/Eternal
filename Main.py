@@ -136,7 +136,7 @@ async def toons_for_user(ctx):
 
 
 @bot.command()
-async def get_profile_image(ctx, msg):
+async def get_profile_image(ctx, *, msg):
     user = ""
     user_toon = msg.strip()
     if not ctx.message.mentions:
