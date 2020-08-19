@@ -166,6 +166,14 @@ async def get_profile_image(ctx, *, msg):
                                            str(ctx.message.mentions[0].id) + ">")
 
 
+# Override the Discord.py CommandNotFound error so that it does not spam with things that are not commands
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+        return
+    raise error
+
+
 @bot.event
 async def on_message(message):
     if str(message.channel) == registration_channel:
@@ -178,6 +186,7 @@ async def on_message(message):
                     filename = datetime.utcnow().strftime('%m-%d-%Y-%H-%M-%S') + ".png"
                     await attachment.save(f)
                     await FileUtils.resize_image(f, user, filename)
+                    
     await bot.process_commands(message)
 
 
