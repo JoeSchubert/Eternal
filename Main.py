@@ -65,7 +65,18 @@ async def joined(ctx, member: discord.Member):
 
 
 @commands.guild_only()
-@bot.command()
+@bot.command(name="toon",
+             brief="Associates toons to users.",
+             description="Associates toons to users.",
+             usage="toon name *or* ?toon @user toon name",
+             help="?toon name \n"
+                   "    associates the specified toon to your account.\n"
+                   "\n"
+                   "?toon @user toon name\n"
+                   "    associates the specified toon to the specified user.\n"
+                   "    *this command can only be used by authorized users.*\n"
+                   "\n"
+                   "note: multiple toons can be added at once if separated by commas.")
 async def toon(ctx, *, msg):
     error = False
     if not ctx.message.mentions:
