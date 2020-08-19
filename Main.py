@@ -59,12 +59,6 @@ async def on_member_update(before, after):
 
 
 @commands.guild_only()
-@bot.command()
-async def joined(ctx, member: discord.Member):
-    await ctx.send('{0.name} joined in {0.joined_at}'.format(member))
-
-
-@commands.guild_only()
 @bot.command(name="toon",
              brief="Associates toons to users.",
              description="Associates toons to users.",
