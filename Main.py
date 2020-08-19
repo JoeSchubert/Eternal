@@ -11,6 +11,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 import DB
 import FileUtils
+import TextTools
 from datetime import datetime
 import io
 
@@ -127,9 +128,8 @@ async def toons_for_user(ctx):
         user = str(ctx.message.mentions[0].id)
         results = DB.search_characters_for_user(conn, user)
         if results:
-            for x in results:
-                await ctx.message.channel.send(
-                     "Character: " + x[2] + " was added to: <@!" + x[1] + "> on: " + x[3])
+            for x in TextTools.list_toons(results):
+                await ctx.message.channel.send(x)
         else:
             await ctx.message.channel.send("Could not find any characters for: <@!" + str(ctx.message.mentions[0].id) +
                                            ">")
