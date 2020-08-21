@@ -95,3 +95,23 @@ def search_characters_for_user(db_conn, user):
     for row in rows:
         results.append(row)
     return results
+
+
+def count_events_for_user(db_conn, user, event):
+    cur = db_conn.cursor()
+    cur.execute("SELECT * FROM user_history WHERE discord_name=? AND event=?", (user, event))
+
+    rows = cur.fetchall()
+    return str(len(rows))
+
+
+def get_previous_nicks(db_conn, user, event):
+    results = []
+    cur = db_conn.cursor()
+    cur.execute("SELECT * FROM user_history WHERE discord_name=? AND event=?", (user, event))
+
+    rows = cur.fetchall()
+    for row in rows:
+        results.append(row[4])
+    return ", ".join(results)
+

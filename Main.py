@@ -8,6 +8,7 @@
 import os
 import discord
 from discord.ext import commands
+from discord.ext.commands import MemberConverter
 from dotenv import load_dotenv
 import DB
 import FileUtils
@@ -197,5 +198,23 @@ async def on_message(message):
                     
     await bot.process_commands(message)
 
+
+@bot.command()
+async def summary(ctx, *, msg):
+    user = ""
+    user_toon = msg.strip()
+    if not ctx.message.mentions:
+        results = DB.search_user_character(conn, user_toon)
+        if results:
+            for x in results:
+                converter = MemberConverter()
+                user = await converter.convert(ctx, x[1])
+                break
+    else:
+        user = ctx.message.mentions[0]
+    user_summary = TextTools.list_summary(conn, str(user.id), user.joined_at)
+    for x in user_summary:
+        await ctx.message.channel.send(x)
+    await get_profile_image(ctx=ctx, msg=user.mention)
 
 bot.run(TOKEN)
