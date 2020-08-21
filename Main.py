@@ -145,11 +145,14 @@ async def get_profile_image(ctx, *, msg):
     user = ""
     user_toon = msg.strip()
     if not ctx.message.mentions:
-        results = DB.search_user_character(conn, user_toon)
-        if results:
-            for x in results:
-                user = x[1]
-                break
+        if msg[0:3] == "<@!":
+            user = msg[3:-1]
+        else:
+            results = DB.search_user_character(conn, user_toon)
+            if results:
+                for x in results:
+                    user = x[1]
+                    break
     else:
         user = str(ctx.message.mentions[0].id)
 
