@@ -18,7 +18,7 @@ def connect(db_file):
 def initialize(db_con):
     sql_create_user_history_table = """ CREATE TABLE IF NOT EXISTS user_history (
                                         id integer PRIMARY KEY,
-                                        discord_name text NOT NULL,
+                                        discord_id text NOT NULL,
                                         server_name text NOT NULL,
                                         event text NOT NULL,
                                         user_name text NOT NULL,
@@ -27,7 +27,7 @@ def initialize(db_con):
 
     sql_create_user_characters_table = """ CREATE TABLE IF NOT EXISTS user_characters (
                                         id integer PRIMARY KEY,
-                                        discord_name text NOT NULL,
+                                        discord_id text NOT NULL,
                                         character text NOT NULL UNIQUE,
                                         timestamp text NOT NULL
                                     ); """
@@ -40,33 +40,33 @@ def initialize(db_con):
 
 
 # Insert a user into the user_history table
-def insert_user_history(db_con, discord_name, server, event, user_name, date):
+def insert_user_history(db_con, discord_id, server, event, user_name, date):
     # Cast all of the parameters to string, in case they were ints or something else.
-    discord_name = str(discord_name)
+    discord_id = str(discord_id)
     server = str(server)
     event = str(event)
     user_name = str(user_name)
     date = str(date)
 
-    sql = ''' INSERT INTO user_history(discord_name, server_name, event, user_name, timestamp)
+    sql = ''' INSERT INTO user_history(discord_id, server_name, event, user_name, timestamp)
               VALUES(?,?,?,?,?) '''
     cur = db_con.cursor()
-    cur.execute(sql, (discord_name, server, event, user_name, date))
+    cur.execute(sql, (discord_id, server, event, user_name, date))
     db_con.commit()
 
 
 # Insert a user a user's alt into the user_characters table
-def insert_user_character(db_con, discord_name, character, date):
+def insert_user_character(db_con, discord_id, character, date):
     # Cast all of the parameters to string, in case they were ints or something else.
-    discord_name = str(discord_name)
+    discord_id = str(discord_id)
     character = str(character)
     date = str(date)
 
-    sql = ''' INSERT INTO user_characters(discord_name, character, timestamp)
+    sql = ''' INSERT INTO user_characters(discord_id, character, timestamp)
               VALUES(?,?,?) '''
     cur = db_con.cursor()
     try:
-        cur.execute(sql, (discord_name, character, date))
+        cur.execute(sql, (discord_id, character, date))
         db_con.commit()
         return False
     except Error:
@@ -88,7 +88,7 @@ def search_user_character(db_conn, character):
 def search_characters_for_user(db_conn, user):
     results = []
     cur = db_conn.cursor()
-    cur.execute("SELECT * FROM user_characters WHERE discord_name=?", (user,))
+    cur.execute("SELECT * FROM user_characters WHERE discord_id=?", (user,))
 
     rows = cur.fetchall()
 
@@ -99,7 +99,7 @@ def search_characters_for_user(db_conn, user):
 
 def count_events_for_user(db_conn, user, event):
     cur = db_conn.cursor()
-    cur.execute("SELECT * FROM user_history WHERE discord_name=? AND event=?", (user, event))
+    cur.execute("SELECT * FROM user_history WHERE discord_id=? AND event=?", (user, event))
 
     rows = cur.fetchall()
     return str(len(rows))
@@ -108,7 +108,7 @@ def count_events_for_user(db_conn, user, event):
 def get_previous_nicks(db_conn, user, event):
     results = []
     cur = db_conn.cursor()
-    cur.execute("SELECT * FROM user_history WHERE discord_name=? AND event=?", (user, event))
+    cur.execute("SELECT * FROM user_history WHERE discord_id=? AND event=?", (user, event))
 
     rows = cur.fetchall()
     for row in rows:
