@@ -15,6 +15,7 @@ import FileUtils
 import TextTools
 from datetime import datetime
 import io
+import MiscFunctions
 
 load_dotenv()
 TOKEN = os.getenv('ETERNAL_BOT_DISCORD_TOKEN')
@@ -22,15 +23,15 @@ TOKEN = os.getenv('ETERNAL_BOT_DISCORD_TOKEN')
 bot = commands.Bot(command_prefix='?', description='Eternal Bot')
 
 database = r"eternal_bot.db"
+# Guild ID for eternal ( this is currently set to a testing server)
+eternal_guild = 739262594036006983
+# Registration channel. Multiple channels can be listed separated by commas.
+registration_channel_names = ["registration"]
+# Users in this role will be able to manage other user information within the bot
+admin_role_names = ["HR"]
 
 conn = DB.connect(database)
 DB.initialize(conn)
-
-admin_role = "HR"
-# User id for the admin. This will always allow this user to access commands as a failsafe.
-admin_id = "265602626509340672"
-
-registration_channel = "registration"
 
 
 def timestamp():
@@ -93,8 +94,7 @@ async def toon(ctx, *, msg):
     else:
         user = str(ctx.message.mentions[0].id)
         user_toon = msg.split(' ', 1)[1].strip()
-        role = discord.utils.get(ctx.guild.roles, name=admin_role)
-        if role in ctx.author.roles or str(ctx.message.author.id) == admin_id:
+        if MiscFunctions.role_has_access(admin_role_names, ctx.author.roles):
             if "," in user_toon:
                 toons = user_toon.split(",")
                 for x in toons:
@@ -185,7 +185,7 @@ async def on_command_error(ctx, error):
 
 @bot.event
 async def on_message(message):
-    if str(message.channel) == registration_channel:
+    if message.channel.name in registration_channel_names:
         if message.attachments:
             f = io.BytesIO()
             image_types = ["png", "jpeg", "gif", "jpg"]
