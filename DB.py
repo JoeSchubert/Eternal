@@ -69,7 +69,7 @@ def insert_user_character(db_con, discord_name, character, date):
         cur.execute(sql, (discord_name, character, date))
         db_con.commit()
         return False
-    except Error as e:
+    except Error:
         return True
 
 
@@ -114,4 +114,3 @@ def get_previous_nicks(db_conn, user, event):
     for row in rows:
         results.append(row[4])
     return ", ".join(results)
-
