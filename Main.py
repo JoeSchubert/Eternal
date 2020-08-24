@@ -108,10 +108,10 @@ async def toon(ctx, *, msg):
                     await ctx.message.channel.send(
                         "Added character: " + user_toon + " to user: <@!" + str(ctx.message.mentions[0].id) + ">")
         else:
-            await ctx.message.channel.send(ctx.message.author.name + "Sorry, but you do not have access to this "
+            await ctx.message.channel.send(ctx.message.author.name + " Sorry, but you do not have access to this "
                                                                      "function. Contact a bot admin.")
     if error:
-        await ctx.message.channel.send(ctx.message.author.name + "Sorry, there was an error completing your command.")
+        await ctx.message.channel.send(ctx.message.author.name + " Sorry, there was an error completing your command.")
 
 
 @bot.command()
