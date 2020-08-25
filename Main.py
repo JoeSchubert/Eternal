@@ -62,6 +62,14 @@ async def on_member_update(before, after):
     if before.nick != after.nick:
         User.history_add(discord_id=after.id, server_id=after.guild.id, event="nick_change",
                          user_name=after.display_name, timestamp=timestamp())
+    # Save this for when the bot joins the live server. These will be changed for various roles to send welcome messages
+    # if before.guild.id == eternal_guild:
+    #    new_role = MiscFunctions.get_new_roles(before.roles, after.roles)
+    #    if new_role == "authorized_user":
+    #        channel = bot.get_channel(747622869365948416)
+    #        await channel.send("Welcome to the test channel")
+    #    elif new_role == "registered":
+    #        # send to the other channel
 
 
 @commands.guild_only()
