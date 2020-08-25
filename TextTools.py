@@ -34,7 +34,12 @@ def list_summary(user_id, joined_at):
     if previous_nicks:
         temp_text += "I have seen this user as these nicks: " + ", ".join(previous_nicks) + ".\n\n"
 
+    if len(temp_text) > 0:
+        ret_message.append(temp_text)
+
     # Get all of the users characters
-    ret_message.append(list_toons(user_id))
+    results = User.toon_search_by_user(user_id)
+    for x in list_toons(results):
+        ret_message.append(x)
 
     return ret_message
