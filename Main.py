@@ -29,8 +29,10 @@ bot = commands.Bot(command_prefix='?', description='Eternal Bot')
 eternal_guild = 739262594036006983
 # Registration channel. Multiple channels can be listed separated by commas.
 registration_channel_names = ["registration"]
+registration_channel_ids = []
 # Users in this role will be able to manage other user information within the bot
 admin_role_names = ["HR"]
+admin_role_ids = []
 
 
 def timestamp():
@@ -92,7 +94,8 @@ async def toon(ctx, *, msg):
     else:
         user = str(ctx.message.mentions[0].id)
         user_toon = msg.split(' ', 1)[1].strip()
-        if MiscFunctions.role_has_access(admin_role_names, ctx.author.roles):
+        if MiscFunctions.role_name_has_access(admin_role_names, ctx.author.roles) or MiscFunctions.role_id_has_access(
+                admin_role_ids, ctx.author.roles):
             if "," in user_toon:
                 toons = user_toon.split(",")
                 for x in toons:
@@ -170,7 +173,7 @@ async def on_command_error(ctx, error):
 
 @bot.event
 async def on_message(message):
-    if message.channel.name in registration_channel_names:
+    if message.channel.name in registration_channel_names or message.channel.id in registration_channel_ids:
         if message.attachments:
             f = io.BytesIO()
             image_types = ["png", "jpeg", "gif", "jpg"]
