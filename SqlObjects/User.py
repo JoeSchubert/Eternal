@@ -17,8 +17,8 @@ def history_add(discord_id, server_id, event, user_name, timestamp):
 
 
 # Helper function to get number of joins
-def history_joins(user_id):
-    return session.query(History).filter_by(discord_id=user_id, event="join")
+def history_joins(user_id, guild_id):
+    return session.query(History).filter_by(discord_id=user_id, event="join", server_id=guild_id)
 
 
 # Helper function to get previous nicks

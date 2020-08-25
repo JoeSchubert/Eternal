@@ -227,7 +227,7 @@ async def summary(ctx, *, msg):
                 break
     else:
         user = ctx.message.mentions[0]
-    user_summary = TextTools.list_summary(str(user.id), user.joined_at)
+    user_summary = TextTools.list_summary(str(user.id), user.joined_at, str(ctx.message.guild.id))
     for x in user_summary:
         await ctx.message.channel.send(x)
     await get_profile_image(ctx=ctx, msg=user.mention)

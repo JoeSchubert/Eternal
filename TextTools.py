@@ -20,9 +20,9 @@ def list_toons(toonlist):
     return ret_toons
 
 
-def list_summary(user_id, joined_at):
+def list_summary(user_id, joined_at, guild_id):
     ret_message = []
-    query = User.history_joins(user_id)
+    query = User.history_joins(user_id, guild_id)
     temp_text = "<@!" + user_id + "> joined the server on " + joined_at.strftime("%b %d %y %H:%M:%S") + ".\n" \
                 "I have seen this user join the server " + str(query.count()) + " " \
                 "times.\n\n"
