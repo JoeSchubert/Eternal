@@ -28,13 +28,9 @@ def list_summary(user_id, joined_at):
                 "times.\n\n"
 
     # Get Previous nicknames
-    query = User.history_nicks(user_id)
-    previous_nicks = []
-    for nick in query.all():
-        previous_nicks.append(nick.user_name)
-    # nick_results = DB.get_previous_nicks(db_conn, user_id, "nick_change")
+    previous_nicks = User.history_nicks(user_id)
     if previous_nicks:
-        temp_text += "I have seen this user as these nicks: " + ", ".join(previous_nicks) + ".\n\n"
+        temp_text += "I have seen this user as these names: " + ", ".join(previous_nicks) + ".\n\n"
 
     if len(temp_text) > 0:
         ret_message.append(temp_text)

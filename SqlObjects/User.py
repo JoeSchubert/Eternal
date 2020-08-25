@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy import Column, Integer, String, create_engine, or_
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -23,7 +23,11 @@ def history_joins(user_id):
 
 # Helper function to get previous nicks
 def history_nicks(user_id):
-    return session.query(History).filter_by(discord_id=user_id, event="nick_change")
+    nicks = []
+    for nick in session.query(History).filter_by(discord_id=user_id).filter(or_(History.event == "join",
+                                                                                History.event == "nick_change")):
+        nicks.append("\"" + nick.user_name + "\"")
+    return nicks
 
 
 class History(Base):
