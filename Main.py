@@ -2,36 +2,35 @@
 # pip install -U python-dotenv
 # pip install -U discord.py
 # pip install -U Pillow
+# pip install sqlalchemy
 
 # Set Discord Bot Token as Environmental Variable "ETERNAL_BOT_DISCORD_TOKEN"
 
+import io
 import os
+from datetime import datetime
+
 import discord
 from discord.ext import commands
 from discord.ext.commands import MemberConverter
 from dotenv import load_dotenv
-import DB
+
 import FileUtils
-import TextTools
-from datetime import datetime
-import io
 import MiscFunctions
+import TextTools
+from SqlObjects import User
 
 load_dotenv()
 TOKEN = os.getenv('ETERNAL_BOT_DISCORD_TOKEN')
 
 bot = commands.Bot(command_prefix='?', description='Eternal Bot')
 
-database = r"eternal_bot.db"
 # Guild ID for eternal ( this is currently set to a testing server)
 eternal_guild = 739262594036006983
 # Registration channel. Multiple channels can be listed separated by commas.
 registration_channel_names = ["registration"]
 # Users in this role will be able to manage other user information within the bot
 admin_role_names = ["HR"]
-
-conn = DB.connect(database)
-DB.initialize(conn)
 
 
 def timestamp():
@@ -46,18 +45,21 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
-    DB.insert_user_history(conn, member.id, member.guild, "join", member.display_name, timestamp())
+    User.history_add(discord_id=member.id, server_id=member.guild.id, event="join", user_name=member.display_name,
+                     timestamp=timestamp())
 
 
 @bot.event
 async def on_member_remove(member):
-    DB.insert_user_history(conn, member.id, member.guild, "leave", member.display_name, timestamp())
+    User.history_add(discord_id=member.id, server_id=member.guild.id, event="leave", user_name=member.display_name,
+                     timestamp=timestamp())
 
 
 @bot.event
 async def on_member_update(before, after):
     if before.nick != after.nick:
-        DB.insert_user_history(conn, after.id, after.guild, "nick_change", after.nick, timestamp())
+        User.history_add(discord_id=after.id, server_id=after.guild.id, event="nick_change",
+                         user_name=after.display_name, timestamp=timestamp())
 
 
 @commands.guild_only()
@@ -74,22 +76,18 @@ async def on_member_update(before, after):
                    "\n"
                    "note: multiple toons can be added at once if separated by commas.")
 async def toon(ctx, *, msg):
-    error = False
     if not ctx.message.mentions:
         user_toon = msg.strip()
         user = ctx.message.author.id
         if "," in user_toon:
             toons = user_toon.split(",")
             for x in toons:
-                print(x.strip())
-                error = DB.insert_user_character(conn, user, x.strip(), timestamp())
-            if not error:
+                User.toon_add(user, ctx.message.guild.id, x.strip(), timestamp())
                 await ctx.message.channel.send(
                     ctx.message.author.display_name + ", I have added characters: " + user_toon + " to your profile.")
         else:
-            error = DB.insert_user_character(conn, user, user_toon, timestamp())
-            if not error:
-                await ctx.message.channel.send(
+            User.toon_add(user, ctx.message.guild.id, user_toon, timestamp())
+            await ctx.message.channel.send(
                     ctx.message.author.display_name + ", I have added character: " + user_toon + " to your profile.")
     else:
         user = str(ctx.message.mentions[0].id)
@@ -98,30 +96,26 @@ async def toon(ctx, *, msg):
             if "," in user_toon:
                 toons = user_toon.split(",")
                 for x in toons:
-                    error = DB.insert_user_character(conn, user, x.strip(), timestamp())
-                if not error:
+                    User.toon_add(user, ctx.message.guild.id, x.strip(), timestamp())
                     await ctx.message.channel.send(
                         "Added characters: " + user_toon + " to user: <@!" + str(ctx.message.mentions[0].id) + ">")
             else:
-                error = DB.insert_user_character(conn, user, user_toon, timestamp())
-                if not error:
-                    await ctx.message.channel.send(
+                User.toon_add(user, ctx.message.guild.id, user_toon, timestamp())
+                await ctx.message.channel.send(
                         "Added character: " + user_toon + " to user: <@!" + str(ctx.message.mentions[0].id) + ">")
         else:
             await ctx.message.channel.send(ctx.message.author.name + " Sorry, but you do not have access to this "
                                                                      "function. Contact a bot admin.")
-    if error:
-        await ctx.message.channel.send(ctx.message.author.name + " Sorry, there was an error completing your command.")
 
 
 @bot.command()
 async def toon_search(ctx, *, msg):
     user_toon = msg.strip()
-    results = DB.search_user_character(conn, user_toon)
+    results = User.toon_search(user_toon)
     if results:
         for x in results:
             await ctx.message.channel.send(
-                "Character: " + x[2] + " was added to: <@!" + x[1] + "> on: " + x[3])
+                "Character: " + x.character + " was added to: <@!" + x.discord_id + "> on: " + x.timestamp)
     else:
         await ctx.message.channel.send("Could not find character: " + user_toon)
 
@@ -132,7 +126,7 @@ async def toons_for_user(ctx):
         await ctx.message.channel.send("You need to mention a user to use this command.")
     else:
         user = str(ctx.message.mentions[0].id)
-        results = DB.search_characters_for_user(conn, user)
+        results = User.toon_search_by_user(user)
         if results:
             for x in TextTools.list_toons(results):
                 await ctx.message.channel.send(x)
@@ -143,17 +137,13 @@ async def toons_for_user(ctx):
 
 @bot.command()
 async def get_profile_image(ctx, *, msg):
-    user = ""
     user_toon = msg.strip()
     if not ctx.message.mentions:
         if msg[0:3] == "<@!":
             user = msg[3:-1]
         else:
-            results = DB.search_user_character(conn, user_toon)
-            if results:
-                for x in results:
-                    user = x[1]
-                    break
+            result = User.toon_search(user_toon).first()
+            user = result.discord_id
     else:
         user = str(ctx.message.mentions[0].id)
 
@@ -204,15 +194,15 @@ async def summary(ctx, *, msg):
     user = ""
     user_toon = msg.strip()
     if not ctx.message.mentions:
-        results = DB.search_user_character(conn, user_toon)
-        if results:
+        results = User.toon_search(user_toon)
+        if results.first() is not None:
             for x in results:
                 converter = MemberConverter()
-                user = await converter.convert(ctx, x[1])
+                user = await converter.convert(ctx, x.discord_id)
                 break
     else:
         user = ctx.message.mentions[0]
-    user_summary = TextTools.list_summary(conn, str(user.id), user.joined_at)
+    user_summary = TextTools.list_summary(str(user.id), user.joined_at)
     for x in user_summary:
         await ctx.message.channel.send(x)
     await get_profile_image(ctx=ctx, msg=user.mention)
