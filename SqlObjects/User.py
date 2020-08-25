@@ -50,12 +50,12 @@ def toon_add(discord_id, server_id, character, timestamp):
     session.commit()
 
 
-# Helper function to get previous nicks
+# Helper function to search toons
 def toon_search(toon):
     return session.query(Toon).filter_by(character=toon)
 
 
-# Helper function to get previous nicks by discord user id
+# Helper function to search toons by user
 def toon_search_by_user(discord_id):
     return session.query(Toon).filter_by(discord_id=discord_id)
 
