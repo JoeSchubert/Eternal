@@ -109,25 +109,20 @@ async def toon(ctx, *, msg):
 
 
 @bot.command()
-async def toon_search(ctx, *, msg):
-    user_toon = msg.strip()
-    results = User.toon_search(user_toon)
-    if results:
-        for x in results:
-            await ctx.message.channel.send(
-                "Character: " + x.character + " was added to: <@!" + x.discord_id + "> on: " + x.timestamp)
-    else:
-        await ctx.message.channel.send("Could not find character: " + user_toon)
-
-
-@bot.command()
-async def toons_for_user(ctx):
+async def find_toon(ctx, *, msg):
     if not ctx.message.mentions:
-        await ctx.message.channel.send("You need to mention a user to use this command.")
+        user_toon = msg.strip()
+        results = User.toon_search(user_toon)
+        if results.first() is not None:
+            for x in results:
+                await ctx.message.channel.send(
+                    "Character: " + x.character + " was added to: <@!" + x.discord_id + "> on: " + x.timestamp)
+        else:
+            await ctx.message.channel.send("Could not find character: " + user_toon)
     else:
         user = str(ctx.message.mentions[0].id)
         results = User.toon_search_by_user(user)
-        if results:
+        if results.first() is not None:
             for x in TextTools.list_toons(results):
                 await ctx.message.channel.send(x)
         else:
