@@ -134,6 +134,25 @@ async def find_toon(ctx, *, msg):
 
 
 @bot.command()
+async def del_toon(ctx, *, msg):
+    if MiscFunctions.role_name_has_access(admin_role_names, ctx.author.roles) or MiscFunctions.role_id_has_access(
+            admin_role_ids, ctx.author.roles):
+        if ctx.message.mentions:
+            num = User.toon_delete_for_user(str(ctx.message.mentions[0].id))
+            if num > 0:
+                await ctx.message.channel.send("Deleted: " + str(num) + " characters for: <@!" +
+                                               str(ctx.message.mentions[0].id) + ">")
+            else:
+                await ctx.message.channel.send("Could not find/delete any characters for: <@!" +
+                                               str(ctx.message.mentions[0].id) + ">")
+        else:
+            if User.toon_delete(msg.strip()) > 0:
+                await ctx.message.channel.send("Character: \"" + msg.strip() + "\"  Deleted.")
+            else:
+                await ctx.message.channel.send("Character: \"" + msg.strip() + "\" could not be found/deleted.")
+
+
+@bot.command()
 async def get_profile_image(ctx, *, msg):
     user_toon = msg.strip()
     if not ctx.message.mentions:

@@ -60,6 +60,20 @@ def toon_search_by_user(discord_id):
     return session.query(Toon).filter_by(discord_id=discord_id)
 
 
+# Helper function to get delete a toon
+def toon_delete(toon):
+    results = session.query(Toon).filter_by(character=toon).delete()
+    session.commit()
+    return results
+
+
+# Helper function to delete all toons for user
+def toon_delete_for_user(user):
+    results = session.query(Toon).filter_by(discord_id=user).delete()
+    session.commit()
+    return results
+
+
 class Toon(Base):
     __tablename__ = 'user_characters'
 
