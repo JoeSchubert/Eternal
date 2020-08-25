@@ -8,10 +8,12 @@ def list_toons(toonlist):
     temp_text = ""
     for x in toonlist:
         if len(temp_text) + len(x.character) <= character_limit_per_message:
-            temp_text += "Character: \"" + x.character + "\" was added to: <@!" + x.discord_id + "> on: " + x.timestamp + "\n"
+            temp_text += "Character: \"" + x.character + "\" was added to: <@!" + x.discord_id + "> on: " + \
+                         x.timestamp + "\n"
         else:
             ret_toons.append(temp_text)
-            temp_text = "Character: \"" + x.character + "\" was added to: <@!" + x.discord_id + "> on: " + x.timestamp + "\n"
+            temp_text = "Character: \"" + x.character + "\" was added to: <@!" + x.discord_id + "> on: " + \
+                        x.timestamp + "\n"
     if len(temp_text) > 0:
         ret_toons.append(temp_text)
 
