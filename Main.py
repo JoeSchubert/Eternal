@@ -19,7 +19,7 @@ TOKEN = os.getenv('ETERNAL_BOT_DISCORD_TOKEN')
 bot = commands.Bot(command_prefix='?', description='Eternal Bot')
 
 
-cogs = ['cogs.Users']
+cogs = ['cogs.Users', 'cogs.Raids']
 
 for cog in cogs:
     bot.load_extension(cog)
