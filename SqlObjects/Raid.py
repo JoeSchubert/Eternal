@@ -32,14 +32,13 @@ def raid_add(corp, day_of_week, time, systems):
             sys = list(set(raid.systems.split(",") + systems))
             sys.sort()
             raid.systems = ",".join(sys)
-        session.commit()
     else:
         sys = list(set(systems))
         sys.sort()
         sys = ",".join(sys)
         raid = Raids(corp=corp, day_of_week=day_of_week, time=time, systems=sys)
-        session.add(raid)
-        session.commit()
+    session.add(raid)
+    session.commit()
 
 
 # Helper function to delete a system for a corp
