@@ -128,6 +128,9 @@ class Raids(commands.Cog):
                            "?raids Weekday\n"
                            "Lists all refinery records that will be loading on the specified day.\n"
                            "\n"
+                           "?raids CORP\n"
+                           "Lists refinery records for a specific corp.\n"
+                           "\n"
                            "?raids all\n"
                            "Lists all refinery records.")
     async def raids(self, ctx, *, msg=None):
@@ -167,6 +170,8 @@ class Raids(commands.Cog):
                     else:
                         await ctx.message.channel.send("Refinery for: " + raid.corp + " loading on " + raid.day_of_week
                                                        + " at " + raid.time)
+                else:
+                    await ctx.message.channel.send("Sorry, I could not find any raid information for: " + msg)
 
         if raids.first():
             for raid in raids:
