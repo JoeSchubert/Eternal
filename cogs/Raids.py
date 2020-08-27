@@ -34,6 +34,17 @@ class Raids(commands.Cog):
                     error = False
                 await ctx.message.channel.send("Recorded Refinery Loading Information")
 
+        elif tokens[1].casefold() == "now".casefold():
+            day = datetime.utcnow().strftime("%A")
+            time = datetime.utcnow().strftime("%H:%M")
+            if len(tokens) >= 2:
+                Raid.raid_add(tokens[0], day, time, tokens[2:])
+                error = False
+            else:
+                Raid.raid_add(tokens[0], day, time, "")
+                error = False
+            await ctx.message.channel.send("Recorded Refinery Loading Information")
+
         if error:
             await ctx.message.channel.send("Could not record raid. \n"
                                            "Please use the format: '?add_raid CORP Weekday XX:XX' \n"
