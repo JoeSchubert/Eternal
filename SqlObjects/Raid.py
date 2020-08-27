@@ -19,6 +19,18 @@ def raid_for_corp(corp):
     return session.query(Raids).filter_by(corp=corp).first()
 
 
+# Helper function to get existing entry for corp
+def rename_corp(corp, new_name):
+    raid = raid_for_corp(corp)
+    if raid:
+        raid.corp = new_name
+        session.add(raid)
+        session.commit()
+        return True
+    else:
+        return False
+
+
 # Helper function to add or update information about a raid
 def raid_add(corp, day_of_week, time, systems):
     raid = raid_for_corp(corp)

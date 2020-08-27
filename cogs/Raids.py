@@ -185,6 +185,26 @@ class Raids(commands.Cog):
         else:
             await ctx.message.channel.send("Sorry, no raids were found.")
 
+    @commands.command(name="rename_corp",
+                      brief="Renames an existing corp record.",
+                      description="Renames an existing corp record.",
+                      usage="OLD_CORP NEW_CORP",
+                      help="Renames the specified OLD_CORP record with the NEW_CORP name.")
+    async def rename_corp(self, ctx, *, msg):
+        if msg:
+            old_corp = msg.split(" ")[0]
+            new_corp = msg.split(" ")[1]
+            if not Raid.raid_for_corp(old_corp):
+                await ctx.message.channel.send("Could not find any raids for saved for corp: " + old_corp)
+            elif Raid.rename_corp(old_corp, new_corp):
+                await ctx.message.channel.send("Renamed Raids for: " + old_corp + " to: " + new_corp)
+            else:
+                await ctx.message.channel.send("There was an issue processing your request. Please use format: \n"
+                                               "?rename_corp OLD_CORP NEW_CORP")
+        else:
+            await ctx.message.channel.send("There was an issue processing your request. Please use format: \n"
+                                           "?rename_corp OLD_CORP NEW_CORP")
+
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, discord.ext.commands.errors.CommandNotFound):
