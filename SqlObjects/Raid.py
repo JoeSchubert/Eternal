@@ -93,13 +93,13 @@ def raids_by_time(start, end):
     start_tokens = start.split(" ")
     end_tokens = end.split(" ")
     if start_tokens[0] == end_tokens[0]:
-        return session.query(Raids).filter(and_(Raids.day_of_week == start_tokens[0]), between(Raids.time,
-                                                                                               start_tokens[1],
-                                                                                               end_tokens[1]))
+        return session.query(Raids).filter(and_(Raids.day_of_week == start_tokens[0], between(Raids.time,
+                                                                                              start_tokens[1],
+                                                                                              end_tokens[1])))
     else:
-        return session.query(Raids).filter(or_(and_(Raids.day_of_week == start_tokens[0]), Raids.time >=
-                                               start_tokens[1]), and_(Raids.day_of_week == end_tokens[0]),
-                                           Raids.time <= end_tokens[1])
+        return session.query(Raids).filter(or_(
+            and_(Raids.day_of_week == start_tokens[0], Raids.time >= start_tokens[1]),
+            and_(Raids.day_of_week == end_tokens[0], Raids.time <= end_tokens[1])))
 
 
 class Raids(Base):
