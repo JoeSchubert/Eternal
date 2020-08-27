@@ -133,7 +133,7 @@ class Raids(commands.Cog):
     async def raids(self, ctx, *, msg=None):
         raids = []
         if not msg:
-            now = datetime.utcnow().strftime("%A %H:%M")
+            now = (datetime.utcnow() - timedelta(minutes=15)).strftime("%A %H:%M")
             end = format((datetime.utcnow() + timedelta(hours=4)), '%A %H:%M')
             raids = Raid.raids_by_time(now, end)
             if raids.count():
