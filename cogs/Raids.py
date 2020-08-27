@@ -12,7 +12,15 @@ class Raids(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(name="add_raid",
+                      brief="Adds or Updates refinery loading information.",
+                      description="Saves refinery information.",
+                      usage="CORP Weekday XX:XX systems",
+                      help="Saves refinery loading information for specified CORP alias, day and time. if the CORP "
+                           "already has a record saved this will update it.\n"
+                           "\n"
+                           "Optional: 'systems' The systems which belong to this corp with refineries. Multiple "
+                           "systems may be listed separated by commas.")
     async def add_raid(self, ctx, *, msg):
         tokens = list(filter(None, re.split(',|, | ', msg)))
         error = True
@@ -31,7 +39,13 @@ class Raids(commands.Cog):
                                            "Please use the format: '?add_raid CORP Weekday XX:XX' \n"
                                            "with systems being optionally listed at the end.")
 
-    @commands.command()
+    @commands.command(name="del_corp_sys",
+                      brief="Removes a system from an existing corp record.",
+                      description="Removes a system from an existing corp record.",
+                      usage="CORP systems",
+                      help="Removes the specified systems from an existing CORP record \n"
+                           "\n"
+                           "Note: Multiple systems may be separated by commas.")
     async def del_corp_sys(self, ctx, *, msg):
         if msg:
             tokens = list(filter(None, re.split(',|, | ', msg)))
@@ -50,7 +64,11 @@ class Raids(commands.Cog):
             await ctx.message.channel.send("There was an issue processing your request. Please use format: \n"
                                            "?del_corp_sys CORP systems")
 
-    @commands.command()
+    @commands.command(name="del_corp",
+                      brief="Removes an existing corp record.",
+                      description="Remove an existing corp record.",
+                      usage="CORP",
+                      help="Removes the specified CORP record.")
     async def del_corp(self, ctx, *, msg):
         if msg:
             if not Raid.raid_for_corp(msg):
@@ -64,7 +82,13 @@ class Raids(commands.Cog):
             await ctx.message.channel.send("There was an issue processing your request. Please use format: \n"
                                            "?del_corp CORP")
 
-    @commands.command()
+    @commands.command(name="add_corp_sys",
+                      brief="Adds a system to an existing corp record.",
+                      description="Adds a system to an existing corp record.",
+                      usage="CORP systems",
+                      help="Adds the specified systems to an existing CORP record.\n"
+                           "\n"
+                           "Note: Multiple systems may be separated by commas.")
     async def add_corp_sys(self, ctx, *, msg):
         if msg:
             tokens = list(filter(None, re.split(',|, | ', msg)))
@@ -83,7 +107,18 @@ class Raids(commands.Cog):
             await ctx.message.channel.send("There was an issue processing your request. Please use format: \n"
                                            "?add_corp_sys CORP systems")
 
-    @commands.command()
+    @commands.command(name="raids",
+                      brief="Lists raid records.",
+                      description="Lists loading times for corps with systems, if known.",
+                      usage="(options)",
+                      help="Without any options specified this lists any refineries that will be loading in the next 4 "
+                           "hours. \n"
+                           "\n"
+                           "?raids Weekday\n"
+                           "Lists all refinery records that will be loading on the specified day.\n"
+                           "\n"
+                           "?raids all\n"
+                           "Lists all refinery records.")
     async def raids(self, ctx, *, msg=None):
         raids = []
         if not msg:
