@@ -63,9 +63,9 @@ class Raids(commands.Cog):
     async def del_corp_sys(self, ctx, *, msg=""):
         if msg:
             tokens = list(filter(None, re.split(',|, | ', msg)))
-            if not Raid.raid_for_corp(tokens[0]):
+            if not Raid.raid_for_corp(tokens[0]).first():
                 await ctx.message.channel.send("```Could not find any raids for saved for corp: " + tokens[0] + "```")
-            elif tokens[1] in Raid.raid_for_corp(tokens[0]).systems:
+            elif tokens[1] in Raid.raid_for_corp(tokens[0]).first().systems:
                 if len(tokens) >= 3:
                     Raid.raid_remove_sys(tokens[0], tokens[1:])
                 else:
@@ -85,7 +85,7 @@ class Raids(commands.Cog):
                       help="Removes the specified CORP's raid record.")
     async def del_raid(self, ctx, *, msg=""):
         if msg:
-            if not Raid.raid_for_corp(msg):
+            if not Raid.raid_for_corp(msg).first():
                 await ctx.message.channel.send("```Could not find any raids for saved for corp: " + msg + "```")
             elif Raid.raid_del_corp(msg) > 0:
                 await ctx.message.channel.send("```Deleted Raids for: " + msg + "```")
@@ -106,9 +106,9 @@ class Raids(commands.Cog):
     async def add_corp_sys(self, ctx, *, msg=""):
         if msg:
             tokens = list(filter(None, re.split(',|, | ', msg)))
-            if not Raid.raid_for_corp(tokens[0]):
+            if not Raid.raid_for_corp(tokens[0]).first():
                 await ctx.message.channel.send("```Could not find any raids for saved for corp: " + tokens[0] + "```")
-            elif tokens[1] not in Raid.raid_for_corp(tokens[0]).systems:
+            elif tokens[1] not in Raid.raid_for_corp(tokens[0]).first().systems:
                 if len(tokens) >= 3:
                     Raid.raid_add_sys(tokens[0], tokens[1:])
                 else:
@@ -139,42 +139,46 @@ class Raids(commands.Cog):
     async def raids(self, ctx, *, msg=""):
         text_to_send = []
         raids = []
+        target = ctx.message.channel
         if not msg:
             now = (datetime.utcnow() - timedelta(minutes=15)).strftime("%A %H:%M")
             end = format((datetime.utcnow() + timedelta(hours=4)), '%A %H:%M')
             raids = Raid.raids_by_time(now, end)
             if raids.first():
-                text_to_send.append("Listing raids scheduled to load within the next 4 hours.\n")
+                text_to_send.append("```Listing raids scheduled to load within the next 4 hours.\n```")
         elif msg:
             if msg.strip().lower() in weekdays:
                 raids = Raid.raids_by_day(msg.strip())
                 if raids.first():
-                    text_to_send.append("Listing raids scheduled to load on: " + msg + "\n")
+                    text_to_send.append("```Listing raids scheduled to load on: " + msg + "\n```")
             elif msg.strip().casefold() == "all".casefold():
                 raids = Raid.raid_all()
                 if raids.first():
-                    text_to_send.append("Listing all refineries: \n")
+                    text_to_send.append("```Listing all refineries: \n```")
             else:
                 tokens = list(filter(None, re.split(',|, | ', msg)))
                 raids = Raid.raid_for_corp(tokens[0])
         if raids.first():
+            if raids.count() >= 10:
+                await ctx.message.channel.send("```Results will be messaged to you as they exceed flood rate limits.```")
+                target = await ctx.message.author.create_dm()
             for raid in raids:
                 if len(raid.systems) > 0:
                     text_to_send.append(
                         "[" + raid.corp + "]" + " loads " + raid.day_of_week
-                        + " at " + raid.time + " in systems: " +
+                        + " at " + raid.time + "GT in systems: " +
                         raid.systems.replace(",", ", "))
                 else:
                     text_to_send.append(
                         "[" + raid.corp + "]" + " loads " + raid.day_of_week
-                        + " at " + raid.time)
+                        + " at " + raid.time + "GT")
         else:
             if msg:
-                await ctx.message.channel.send("Sorry, no raids were found for: " + msg)
+                await ctx.message.channel.send("```Sorry, no raids were found for: " + msg + "```")
             else:
-                await ctx.message.channel.send("Sorry, no raids were found.")
+                await ctx.message.channel.send("```Sorry, no raids were found.```")
         if text_to_send:
-            await send_text(ctx, text_to_send)
+            await send_text(target, text_to_send)
 
     @commands.command(name="rename_corp",
                       brief="Renames an existing corp record.",
@@ -202,17 +206,17 @@ class Raids(commands.Cog):
             return
 
 
-async def send_text(ctx, text_to_send):
+async def send_text(target, text_to_send):
     if text_to_send:
         temp_text = ""
         for text in text_to_send:
             if len(temp_text) + len(text) <= char_limit:
                 temp_text += text + "\n"
             else:
-                await ctx.message.channel.send("```\n" + temp_text + "\n```")
+                await target.send("```\n" + temp_text + "\n```")
                 temp_text = text
         if temp_text:
-            await ctx.message.channel.send("```\n" + temp_text + "\n```")
+            await target.send("```\n" + temp_text + "\n```")
 
 
 def setup(bot):
