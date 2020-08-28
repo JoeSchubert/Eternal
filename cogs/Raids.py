@@ -28,6 +28,9 @@ class Raids(commands.Cog):
         if msg:
             tokens = list(filter(None, re.split(',|, | ', msg)))
             if tokens[1].lower() in weekdays:
+                if re.match(r"^\d\d\d\d$", tokens[2]):
+                    time = tokens[2]
+                    tokens[2] = time[:2] + ":" + time[2:]
                 if re.match(r"^\d\d:\d\d$", tokens[2]):
                     if len(tokens) >= 3:
                         Raid.raid_add(tokens[0], tokens[1], tokens[2], tokens[3:])
