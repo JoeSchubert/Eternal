@@ -40,7 +40,6 @@ def rename_corp(corp, new_name):
 
 # Helper function to add or update information about a raid
 def raid_add(corp, day_of_week, time, systems):
-    print(clean_corp(corp))
     raid = raid_for_corp(clean_corp(corp)).first()
     if raid:
         raid.corp = raid.corp
