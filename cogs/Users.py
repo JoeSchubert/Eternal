@@ -172,6 +172,8 @@ class Users(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        if isinstance(message.channel, discord.DMChannel):
+            return
         if message.channel.name in registration_channel_names or message.channel.id in registration_channel_ids:
             if message.attachments:
                 f = io.BytesIO()
