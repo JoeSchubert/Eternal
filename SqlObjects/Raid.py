@@ -1,12 +1,17 @@
 from sqlalchemy import Column, Integer, String, create_engine, or_, and_, between, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import re
 
 Base = declarative_base()
 engine = create_engine('sqlite:///eternal_bot.db', echo=False)
 
 Session = sessionmaker(bind=engine)
 session = Session()
+
+
+def clean_corp(corp):
+    return re.sub(r'[\[\]]', "", corp)
 
 
 # Helper function to get all rows
@@ -16,14 +21,14 @@ def raid_all():
 
 # Helper function to get existing entry for corp
 def raid_for_corp(corp):
-    return session.query(Raids).filter_by(corp=corp)
+    return session.query(Raids).filter_by(corp=clean_corp(corp))
 
 
 # Helper function to get existing entry for corp
 def rename_corp(corp, new_name):
-    raid = raid_for_corp(corp).first()
+    raid = raid_for_corp(clean_corp(corp)).first()
     if raid:
-        raid.corp = new_name
+        raid.corp = clean_corp(new_name)
         session.add(raid)
         session.commit()
         return True
@@ -33,7 +38,8 @@ def rename_corp(corp, new_name):
 
 # Helper function to add or update information about a raid
 def raid_add(corp, day_of_week, time, systems):
-    raid = raid_for_corp(corp).first()
+    print(clean_corp(corp))
+    raid = raid_for_corp(clean_corp(corp)).first()
     if raid:
         raid.corp = raid.corp
         raid.day_of_week = day_of_week
@@ -48,14 +54,14 @@ def raid_add(corp, day_of_week, time, systems):
         sys = list(set(systems))
         sys.sort()
         sys = ",".join(sys)
-        raid = Raids(corp=corp, day_of_week=day_of_week, time=time, systems=sys)
+        raid = Raids(corp=clean_corp(corp), day_of_week=day_of_week, time=time, systems=sys)
     session.add(raid)
     session.commit()
 
 
 # Helper function to delete a system for a corp
 def raid_remove_sys(corp, systems):
-    raid = raid_for_corp(corp).first()
+    raid = raid_for_corp(clean_corp(corp)).first()
     if raid:
         raid.corp = raid.corp
         raid.day_of_week = raid.day_of_week
@@ -72,7 +78,7 @@ def raid_remove_sys(corp, systems):
 
 # Helper function to add a system for a corp
 def raid_add_sys(corp, systems):
-    raid = raid_for_corp(corp).first()
+    raid = raid_for_corp(clean_corp(corp)).first()
     if raid:
         raid.corp = raid.corp
         raid.day_of_week = raid.day_of_week
@@ -89,7 +95,7 @@ def raid_add_sys(corp, systems):
 
 # Helper function to delete corp raids
 def raid_del_corp(corp):
-    count = session.query(Raids).filter_by(corp=corp).delete()
+    count = session.query(Raids).filter_by(corp=clean_corp(corp)).delete()
     session.commit()
     return count
 
