@@ -145,22 +145,23 @@ class Raids(commands.Cog):
             end = format((datetime.utcnow() + timedelta(hours=4)), '%A %H:%M')
             raids = Raid.raids_by_time(now, end)
             if raids.first():
-                text_to_send.append("```Listing raids scheduled to load within the next 4 hours.\n```")
+                text_to_send.append("Listing raids scheduled to load within the next 4 hours.\n")
         elif msg:
             if msg.strip().lower() in weekdays:
                 raids = Raid.raids_by_day(msg.strip())
                 if raids.first():
-                    text_to_send.append("```Listing raids scheduled to load on: " + msg + "\n```")
+                    text_to_send.append("Listing raids scheduled to load on: " + msg + "\n")
             elif msg.strip().casefold() == "all".casefold():
                 raids = Raid.raid_all()
                 if raids.first():
-                    text_to_send.append("```Listing all refineries: \n```")
+                    text_to_send.append("Listing all refineries: \n")
             else:
                 tokens = list(filter(None, re.split(',|, | ', msg)))
                 raids = Raid.raid_for_corp(tokens[0])
         if raids.first():
             if raids.count() >= 10:
-                await ctx.message.channel.send("```Results will be messaged to you as they exceed flood rate limits.```")
+                await ctx.message.channel.send("```Results will be messaged to you as they exceed flood rate "
+                                               "limits.```")
                 target = await ctx.message.author.create_dm()
             for raid in raids:
                 if len(raid.systems) > 0:
