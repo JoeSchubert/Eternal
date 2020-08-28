@@ -1,7 +1,9 @@
-from sqlalchemy import Column, Integer, String, create_engine, or_, and_, between, func
+import datetime
+import re
+
+from sqlalchemy import Column, Integer, String, create_engine, or_, and_, between, func, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-import re
 
 Base = declarative_base()
 engine = create_engine('sqlite:///eternal_bot.db', echo=False)
