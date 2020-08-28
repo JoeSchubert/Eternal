@@ -128,10 +128,11 @@ class Raids(Base):
     day_of_week = Column(String)
     time = Column(String)
     systems = Column(String)
+    modified = Column(DateTime, default=datetime.datetime.utcnow)
 
     def __repr__(self):
-        return "<Raids(corp='%s', day_of_week'%s', time='%s', systems='%s')>" % (
-            self.corp, self.day_of_week, self.time, self.systems)
+        return "<Raids(corp='%s', day_of_week'%s', time='%s', systems='%s', modified='%s')>" % (
+            self.corp, self.day_of_week, self.time, self.systems, self.modified)
 
 
 Base.metadata.create_all(engine)
