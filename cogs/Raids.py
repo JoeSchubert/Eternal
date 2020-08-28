@@ -171,11 +171,11 @@ class Raids(commands.Cog):
                     text_to_send.append(
                         "[" + raid.corp + "]" + " loads " + raid.day_of_week
                         + " at " + raid.time + "GT in systems: " +
-                        raid.systems.replace(",", ", "))
+                        raid.systems.replace(",", ", ") + " -- updated:" + raid.modified.strftime("(%m-%d)"))
                 else:
                     text_to_send.append(
                         "[" + raid.corp + "]" + " loads " + raid.day_of_week
-                        + " at " + raid.time + "GT")
+                        + " at " + raid.time + "GT -- updated:" + raid.modified.strftime("(%m-%d)"))
         else:
             if msg:
                 await ctx.message.channel.send("```Sorry, no raids were found for: " + msg + "```")
