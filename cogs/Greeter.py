@@ -8,18 +8,18 @@ french_chat = 739552359692107888
 german_chat = 739467024262103140
 
 
-english_welcome = "Welcome to the Eternal Coalition Discord, please check out the <#749092528338239498> and  " \
-                  "<#749092528338239498> channels, and ask any questions you may have, we have a lot of " \
+english_welcome = "Welcome to the Eternal Coalition Discord, please check out the <#667923258569654272> and  " \
+                  "<#666068287951470604> channels, and ask any questions you may have, we have a lot of " \
                   "veteran pilots willing to help."
 
 french_welcome = "Bienvenue sur le FTNL Discord, en partenariat avec les sociétés éternelles. Nous avons de " \
                  "nombreuses informations à lire dans la catégorie Base de connaissances et de nombreux pilotes " \
-                 "expérimentés pour répondre à toutes vos questions. Veuillez lire le canal <#749092528338239498> " \
+                 "expérimentés pour répondre à toutes vos questions. Veuillez lire le canal <#688791074319237152> " \
                  "pour savoir comment utiliser notre robot de traduction."
 
 german_welcome = "Willkommen zum SPQR Discord, der mit den Eternal Corporations zusammenarbeitet. Wir haben viele " \
                  "Informationen in der Kategorie Knowledgebase zu lesen und viele erfahrene Piloten, um Ihre Fragen " \
-                 "zu beantworten. Bitte lesen Sie den <#749092528338239498> -Kanal zur Verwendung unseres " \
+                 "zu beantworten. Bitte lesen Sie den <#688791074319237152> -Kanal zur Verwendung unseres " \
                  "Übersetzer-Bots."
 
 
