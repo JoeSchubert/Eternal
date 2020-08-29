@@ -37,13 +37,13 @@ class Greeter(commands.Cog):
                 # German Role Greeting
                 if role.name == "German":
                     channel = self.bot.get_channel(german_chat)
-                    await channel.send("<@!" + after.id + ">" + german_welcome)
+                    await channel.send("<@!" + str(after.id) + ">" + german_welcome)
                 # French Role Greeting
                 if role.name == "French":
                     channel = self.bot.get_channel(french_chat)
-                    await channel.send("<@!" + after.id + ">" + french_welcome)
+                    await channel.send("<@!" + str(after.id) + ">" + french_welcome)
             channel = self.bot.get_channel(coalition_chat)
-            await channel.send("<@!" + after.id + ">" + english_welcome)
+            await channel.send("<@!" + str(after.id) + ">" + english_welcome)
 
 
 def setup(bot):
