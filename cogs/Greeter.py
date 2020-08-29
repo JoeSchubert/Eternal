@@ -3,7 +3,7 @@ import asyncio
 from discord.ext import commands
 import MiscFunctions as Util
 
-coalition_chat = 739262594036006986
+coalition_chat = 653234239990661130
 french_chat = 739552359692107888
 german_chat = 739467024262103140
 
