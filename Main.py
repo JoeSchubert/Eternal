@@ -20,7 +20,7 @@ bot = commands.Bot(command_prefix='?', description='Eternal Bot')
 # Keep this for now, users might get re-enabled later.
 # cogs = ['cogs.Users', 'cogs.Raids']
 
-cogs = ['cogs.Raids']
+cogs = ['cogs.Raids', 'cogs.Greeter']
 
 for cog in cogs:
     bot.load_extension(cog)
