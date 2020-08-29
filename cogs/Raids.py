@@ -11,7 +11,7 @@ char_limit = 1800
 
 
 def check_raid_channel(ctx):
-    return ctx.message.channel.id == 748691778097643620
+    return ctx.message.channel.id == 749057646115422229
 
 
 class Raids(commands.Cog):
