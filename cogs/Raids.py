@@ -10,6 +10,10 @@ weekdays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", 
 char_limit = 1800
 
 
+def check_raid_channel(ctx):
+    return ctx.message.channel.id == 748691778097643620
+
+
 class Raids(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -23,6 +27,7 @@ class Raids(commands.Cog):
                            "\n"
                            "Optional: 'systems' The systems which belong to this corp with refineries. Multiple "
                            "systems may be listed separated by commas.")
+    @commands.check(check_raid_channel)
     async def add_raid(self, ctx, *, msg=""):
         error = True
         if msg:
@@ -63,6 +68,7 @@ class Raids(commands.Cog):
                       help="Removes the specified systems from an existing CORP record \n"
                            "\n"
                            "Note: Multiple systems may be separated by commas.")
+    @commands.check(check_raid_channel)
     async def del_corp_sys(self, ctx, *, msg=""):
         if msg:
             tokens = list(filter(None, re.split(',|, | ', msg)))
@@ -86,6 +92,7 @@ class Raids(commands.Cog):
                       description="Remove an existing raid record.",
                       usage="CORP",
                       help="Removes the specified CORP's raid record.")
+    @commands.check(check_raid_channel)
     async def del_raid(self, ctx, *, msg=""):
         if msg:
             if not Raid.raid_for_corp(msg).first():
@@ -106,6 +113,7 @@ class Raids(commands.Cog):
                       help="Adds the specified systems to an existing CORP record.\n"
                            "\n"
                            "Note: Multiple systems may be separated by commas.")
+    @commands.check(check_raid_channel)
     async def add_corp_sys(self, ctx, *, msg=""):
         if msg:
             tokens = list(filter(None, re.split(',|, | ', msg)))
@@ -139,6 +147,7 @@ class Raids(commands.Cog):
                            "\n"
                            "?raids all\n"
                            "Lists all refinery records.")
+    @commands.check(check_raid_channel)
     async def raids(self, ctx, *, msg=""):
         text_to_send = []
         raids = []
@@ -189,6 +198,7 @@ class Raids(commands.Cog):
                       description="Renames an existing corp record.",
                       usage="OLD_CORP NEW_CORP",
                       help="Renames the specified OLD_CORP record with the NEW_CORP name.")
+    @commands.check(check_raid_channel)
     async def rename_corp(self, ctx, *, msg=""):
         if msg:
             old_corp = msg.split(" ")[0]
@@ -205,6 +215,7 @@ class Raids(commands.Cog):
                                            "?rename_corp OLD_CORP NEW_CORP```")
 
     @commands.Cog.listener()
+    @commands.check(check_raid_channel)
     async def on_command_error(self, ctx, error):
         if isinstance(error, discord.ext.commands.errors.CommandNotFound):
             return
