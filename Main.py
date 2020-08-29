@@ -9,7 +9,6 @@
 
 import os
 
-import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -31,13 +30,6 @@ for cog in cogs:
 async def on_ready():
     print('Logged in as ' + bot.user.name)
     print('------')
-
-
-# Override the Discord.py CommandNotFound error so that it does not spam with things that are not commands
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-        return
 
 
 bot.run(TOKEN, bot=True, reconnect=True)
