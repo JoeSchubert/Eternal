@@ -67,7 +67,9 @@ def raid_remove_sys(corp, systems):
         raid.corp = raid.corp
         raid.day_of_week = raid.day_of_week
         raid.time = raid.time
-        sys = raid.systems.split(",")
+        sys = []
+        if raid.systems:
+            sys = raid.systems.split(",")
         if isinstance(systems, list):
             for x in systems:
                 sys.remove(x.strip())
@@ -84,7 +86,9 @@ def raid_add_sys(corp, systems):
         raid.corp = raid.corp
         raid.day_of_week = raid.day_of_week
         raid.time = raid.time
-        sys = raid.systems.split(",")
+        sys = []
+        if raid.systems:
+            sys = raid.systems.split(",")
         if isinstance(systems, list):
             for x in systems:
                 sys.append(x.strip())
