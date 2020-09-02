@@ -120,7 +120,7 @@ class Raids(commands.Cog):
             if not Raid.raid_for_corp(tokens[0]).first():
                 await ctx.message.channel.send("```Could not find any raids for saved for corp: " + tokens[0] + "```")
             elif tokens[1] not in Raid.raid_for_corp(tokens[0]).first().systems:
-                if len(tokens) >= 3:
+                if len(tokens) >= 2:
                     Raid.raid_add_sys(tokens[0], tokens[1:])
                 else:
                     Raid.raid_add_sys(tokens[0], tokens[1])
