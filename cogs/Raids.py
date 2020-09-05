@@ -20,10 +20,19 @@ class Raids(commands.Cog):
 
     @commands.command(name="add_raid",
                       brief="Adds or Updates refinery loading information.",
-                      description="Saves refinery information.",
-                      usage="CORP Weekday XX:XX systems",
+                      description="Adds or Updates refinery information.",
+                      usage="CORP Weekday XX:XX systems"
+                            "or"
+                            "?add_raid CORP now 00systems"
+                            "or"
+                            "?add_raid CORP XdXXhXXm",
                       help="Saves refinery loading information for specified CORP alias, day and time. if the CORP "
                            "already has a record saved this will update it.\n"
+                           "\n"
+                           "If 'now' is specified, the current date/time in GT is used.\n"
+                           "\n"
+                           "If 'XdXXhXXm' is used it will calculate the date/time in GT for the provide values.\n"
+                           "    Note: each field is optional. If the game shows 0d15h00m, you can pass just '15h'.\n"
                            "\n"
                            "Optional: 'systems' The systems which belong to this corp with refineries. Multiple "
                            "systems may be listed separated by commas.")
@@ -32,6 +41,8 @@ class Raids(commands.Cog):
         error = True
         if msg:
             tokens = list(filter(None, re.split(',|, | ', msg)))
+            regex = re.compile(r'((?P<days>\d?)d?)((?P<hours>\d+)h)((?P<minutes>\d+)m)')
+            delta = regex.search(tokens[1])
             if tokens[1].lower() in weekdays:
                 if re.match(r"^\d\d\d\d$", tokens[2]):
                     time = tokens[2]
@@ -45,9 +56,33 @@ class Raids(commands.Cog):
                         error = False
                     await ctx.message.channel.send("```Recorded Refinery Loading Information```")
 
-            elif tokens[1].casefold() == "now".casefold():
+            if tokens[1].casefold() == "now".casefold():
                 day = datetime.utcnow().strftime("%A")
                 time = datetime.utcnow().strftime("%H:%M")
+                if len(tokens) >= 2:
+                    Raid.raid_add(tokens[0], day, time, tokens[2:])
+                    error = False
+                else:
+                    Raid.raid_add(tokens[0], day, time, "")
+                    error = False
+                await ctx.message.channel.send("```Recorded Refinery Loading Information```")
+
+            elif delta:
+                if delta.group('days'):
+                    days = int(delta.group('days'))
+                else:
+                    days = 0
+                if delta.group('hours'):
+                    hours = int(delta.group('hours'))
+                else:
+                    hours = 0
+                if delta.group('minutes'):
+                    minutes = int(delta.group('minutes'))
+                else:
+                    minutes = 0
+                time = datetime.utcnow() + timedelta(days=days, hours=hours, minutes=minutes)
+                day = time.strftime("%A")
+                time = time.strftime("%H:%M")
                 if len(tokens) >= 2:
                     Raid.raid_add(tokens[0], day, time, tokens[2:])
                     error = False
