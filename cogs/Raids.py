@@ -41,7 +41,7 @@ class Raids(commands.Cog):
         error = True
         if msg:
             tokens = list(filter(None, re.split(',|, | ', msg)))
-            regex = re.compile(r'((?P<days>\d?)d?)((?P<hours>\d+)h)((?P<minutes>\d+)m)')
+            regex = re.compile(r'(((?P<days>\d+)d)?((?P<hours>\d+)h)?((?P<minutes>\d+)m)?)+', re.IGNORECASE)
             delta = regex.search(tokens[1])
             if tokens[1].lower() in weekdays:
                 if re.match(r"^\d\d\d\d$", tokens[2]):
@@ -67,7 +67,7 @@ class Raids(commands.Cog):
                     error = False
                 await ctx.message.channel.send("```Recorded Refinery Loading Information```")
 
-            elif delta:
+            elif delta.group('days') or delta.group('hours') or delta.group('minutes'):
                 if delta.group('days'):
                     days = int(delta.group('days'))
                 else:
