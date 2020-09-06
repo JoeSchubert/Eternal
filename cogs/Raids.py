@@ -192,7 +192,8 @@ class Raids(commands.Cog):
             end = format((datetime.utcnow() + timedelta(hours=4)), '%A %H:%M')
             raids = Raid.raids_by_time(now, end)
             if raids.first():
-                text_to_send.append("Listing raids scheduled to load within the next 4 hours.\n")
+                text_to_send.append("Listing raids scheduled to load within the next 4 hours. Current GT: " +
+                                    datetime.utcnow().strftime('%A %H:%M') + "\n")
         elif msg:
             if msg.strip().lower() in weekdays:
                 raids = Raid.raids_by_day(msg.strip())
